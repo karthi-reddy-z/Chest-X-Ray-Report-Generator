@@ -1,0 +1,5 @@
+{
+  "name": "AI X-Ray Medical Report Generator",
+  "description": "An application to upload a chest X-ray image, receive an AI-generated textual analysis, and view a simulated Grad-CAM visualization. Users can download a comprehensive PDF report of the findings.",
+  "requestFramePermissions": []
+}
