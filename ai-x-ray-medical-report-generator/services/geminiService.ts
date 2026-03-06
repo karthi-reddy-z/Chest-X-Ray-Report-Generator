@@ -16,22 +16,22 @@ export async function generateXrayReport(
   const prompt = `
 You are an expert radiologist AI.
 
-Analyze the chest X-ray image and produce a report EXACTLY in the format below.
+Analyze the chest X-ray and generate a structured medical report.
 
-Return the report ONLY in this format.
+Use this format WITHOUT hashtags or markdown.
 
-## AI CHEST X-RAY REPORT
+AI CHEST X-RAY REPORT
 
-### STUDY INFORMATION
+STUDY INFORMATION
 Imaging Type:
 Projection:
 
-### IMAGE QUALITY
+IMAGE QUALITY
 Exposure:
 Rotation:
 Artifacts:
 
-### ANATOMICAL FINDINGS
+ANATOMICAL FINDINGS
 Lungs:
 Pleura:
 Mediastinum:
@@ -39,24 +39,23 @@ Cardiac Silhouette:
 Diaphragm:
 Bones:
 
-### AI DISEASE SCREENING
-Pneumonia: (Detected / Not Detected) - Confidence %
-Tuberculosis: (Detected / Not Detected) - Confidence %
-Lung Nodule: (Detected / Not Detected) - Confidence %
-Pleural Effusion: (Detected / Not Detected) - Confidence %
+AI DISEASE SCREENING
+Pneumonia: Detected / Not Detected (Confidence %)
+Tuberculosis: Detected / Not Detected (Confidence %)
+Lung Nodule: Detected / Not Detected (Confidence %)
+Pleural Effusion: Detected / Not Detected (Confidence %)
 
-### IMPRESSION
+IMPRESSION
 1.
 2.
 3.
 
-### AI CONFIDENCE
+AI CONFIDENCE
 Overall Diagnostic Confidence: %
 
 Rules:
-- Always fill every section.
-- Use professional radiology terminology.
-- If nothing abnormal is visible, state "No abnormality detected".
+Use clean professional medical language.
+Do not use hashtags (#).
 `;
 
   try {
