@@ -4,7 +4,6 @@ const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-// Use stable Gemini model
 const model = genAI.getGenerativeModel({
   model: 'gemini-1.5-flash',
 });
@@ -14,83 +13,72 @@ export async function generateXrayReport(
   mimeType: string
 ): Promise<string> {
 
-  const image = {
-    inlineData: {
-      data: base64Data,
-      mimeType: mimeType,
-    },
-  };
-
   const prompt = `
 You are an expert radiologist AI.
 
-Analyze the provided chest X-ray image and generate a professional structured radiology report.
+Analyze the chest X-ray image and produce a report EXACTLY in the format below.
 
-Follow this format strictly:
+Return the report ONLY in this format.
 
-## CHEST X-RAY REPORT
+## AI CHEST X-RAY REPORT
 
-### STUDY
-- Imaging Type: Chest X-ray
-- Projection (PA/AP if visible)
+### STUDY INFORMATION
+Imaging Type:
+Projection:
 
 ### IMAGE QUALITY
-- Exposure quality
-- Rotation
-- Artifacts if present
+Exposure:
+Rotation:
+Artifacts:
 
-### FINDINGS
-
-**Lungs**
-- Evaluate lung fields
-- Look for consolidation, nodules, or opacities
-
-**Pleura**
-- Check for pleural effusion
-- Check for pneumothorax
-
-**Mediastinum**
-- Evaluate mediastinal contours
-- Check trachea position
-
-**Cardiac Silhouette**
-- Assess heart size
-- Cardiothoracic ratio estimation
-
-**Diaphragm**
-- Evaluate diaphragmatic contour
-- Presence of gastric bubble
-
-**Bones**
-- Inspect ribs, clavicles, and spine
-- Look for fractures or lesions
+### ANATOMICAL FINDINGS
+Lungs:
+Pleura:
+Mediastinum:
+Cardiac Silhouette:
+Diaphragm:
+Bones:
 
 ### AI DISEASE SCREENING
-
-Provide detection status and confidence percentage.
-
-- Pneumonia: Detected / Not Detected (Confidence %)
-- Tuberculosis: Detected / Not Detected (Confidence %)
-- Lung Nodule: Detected / Not Detected (Confidence %)
-- Pleural Effusion: Detected / Not Detected (Confidence %)
+Pneumonia: (Detected / Not Detected) - Confidence %
+Tuberculosis: (Detected / Not Detected) - Confidence %
+Lung Nodule: (Detected / Not Detected) - Confidence %
+Pleural Effusion: (Detected / Not Detected) - Confidence %
 
 ### IMPRESSION
-Provide 2–3 concise diagnostic conclusions.
+1.
+2.
+3.
 
-### AI CONFIDENCE SCORE
-Provide an overall diagnostic confidence percentage.
+### AI CONFIDENCE
+Overall Diagnostic Confidence: %
 
-Use professional radiology terminology and bullet points.
-Avoid hallucinating diseases if not visible.
+Rules:
+- Always fill every section.
+- Use professional radiology terminology.
+- If nothing abnormal is visible, state "No abnormality detected".
 `;
 
   try {
 
-    const result = await model.generateContent([prompt, image]);
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: prompt },
+            {
+              inlineData: {
+                mimeType: mimeType,
+                data: base64Data
+              }
+            }
+          ]
+        }
+      ]
+    });
 
-    const response = await result.response;
-
-    const text = response.text();
+    const text = result.response.text();
 
     return text;
 
